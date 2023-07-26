@@ -1,29 +1,33 @@
 <div align="center">   
-
-#PlayerLoop customization API
-##Create your own loop system using interface built on top of <a href="https://docs.unity3d.com/ScriptReference/LowLevel.PlayerLoop.html">Unity's PlayerLoop</a>
+    
+<h1>PlayerLoop customization API</h1>
+Create your own loop system using interface built on top of <a href="https://docs.unity3d.com/ScriptReference/LowLevel.PlayerLoop.html">Unity's PlayerLoop</a>
 </div>
 
-#Features
+# Features
 - **No need to worry about managing array of PlayerLoopSystems**
 - **Easy to use functionality** - think about what you want to add, everything else already done for you.
 
 # Installation
 
-###Add via package manager
->
+### Add via package manager
+```c# 
+https://github.com/skelitheprogrammer/PlayerLoop-Customization-API
+```
 
-###Add dependency in manifest.json
->
+### Add dependency in manifest.json
+```c# 
+"com.skillitronic.playerloopcustomizationapi" : "https://github.com/skelitheprogrammer/PlayerLoop-Customization-API",
+```
 
-#Getting Started
+# Getting Started
 
-##Create struct type which will act as a name for a custom PlayerLoopSystem
+## Create struct type which will act as a name for a custom PlayerLoopSystem
 
 ```c#
 private struct CustomSystemName {}
 ```
-##Create new [PlayerLoopSystem](https://docs.unity3d.com/ScriptReference/LowLevel.PlayerLoopSystem.html)
+## Create new [PlayerLoopSystem](https://docs.unity3d.com/ScriptReference/LowLevel.PlayerLoopSystem.html)
 
 ```c#
 private struct CustomSystemName {}
@@ -47,7 +51,7 @@ internal static class CustomPlayerLoopInitialization
 }
 ```
 
-##Get the current changes from API
+## Get the current changes from API
 
 ```c#
 private struct CustomSystemName {}
@@ -73,7 +77,7 @@ internal static class CustomPlayerLoopInitialization
 }
 ```
 
-##Get interested subSystem
+## Get interested subSystem
 
 using PlayerLoopAPI class
 
@@ -107,7 +111,7 @@ internal static class CustomPlayerLoopInitialization
 }
 ```
 
-##Insert your new [PlayerLoopSystem](https://docs.unity3d.com/ScriptReference/LowLevel.PlayerLoopSystem.html) inside of a selected subSystem using extension methods
+## Insert your new [PlayerLoopSystem](https://docs.unity3d.com/ScriptReference/LowLevel.PlayerLoopSystem.html) inside of a selected subSystem using extension methods
 ```c#
 private struct CustomSystemName {}
 
@@ -148,10 +152,10 @@ internal static class CustomPlayerLoopInitialization
 
 # Utils
 - `PlayerLoopUtils.ShowLoopSystems(PlayerLoopSystem playerLoopSystem, int inline = 0)` - Get string of all [PlayerLoopSystems](https://docs.unity3d.com/ScriptReference/LowLevel.PlayerLoopSystem.html)
-- Follow `"PlayerLoopUtils/Log PlayerLoop" menu item` to log out current [PlayerLoop](https://docs.unity3d.com/ScriptReference/LowLevel.PlayerLoop.html)
+- Follow `"PlayerLoopUtils/Log PlayerLoop" menu item` to log out to console current [PlayerLoop](https://docs.unity3d.com/ScriptReference/LowLevel.PlayerLoop.html)
 # Experimental 
 If you add [`PLAYERLOOPAPI_EXPERIMENTAL`](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/preprocessor-directives) in [`Scripting define symbols`](https://docs.unity3d.com/Manual/CustomScriptingSymbols.html)
 you're opening up the possibility of using experimental features.
 
-###`PlayerLoopAPI.Query<T>()` - gives opportunity to traverse through the whole PlayerLoopSystem recursively.
+`PlayerLoopAPI.Query<T>()` - gives opportunity to traverse through the whole PlayerLoopSystem recursively.
 > Can be expensive if PlayerLoop will have too many subSystems/nested subSystems

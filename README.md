@@ -11,12 +11,13 @@ Create your own loop system using interface built on top of <a href="https://doc
 # Installation
 
 ### Add via package manager
-```c# 
-https://github.com/skelitheprogrammer/PlayerLoop-Customization-API
+
+```
+https://github.com/skelitheprogrammer/PlayerLoop-Customization-API.git
 ```
 
 ### Add dependency in manifest.json
-```c# 
+```
 "com.skillitronic.playerloopcustomizationapi" : "https://github.com/skelitheprogrammer/PlayerLoop-Customization-API",
 ```
 

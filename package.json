@@ -1,0 +1,21 @@
+{
+  "name": "com.skillitronic.playerloopcustomizationapi",
+  "displayName": "PlayerLoop customization API",
+  "version": "0.0.2",
+  "description": "",
+  "keywords": [
+    "unity",
+    "unity3d",
+    "upm",
+    "playerloop",
+    "playerloopapi",
+    "customization",
+    "api"
+  ],
+  "dependencies": {
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}

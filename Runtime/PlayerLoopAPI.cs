@@ -37,6 +37,39 @@ namespace PlayerLoopCustomizationAPI.Runtime
             throw new NullReferenceException($"System {typeof(T).Name} is not presented in {(loopSystem.type != null ? loopSystem.type : "MainPlayerLoop")} system");
         }
 
+        public static ref PlayerLoopSystem WrapSystemAt(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newBeforeSystem, in PlayerLoopSystem newAfterSystem, int index)
+        {
+            if (loopSystem.subSystemList == null)
+            {
+                throw new NullReferenceException($"{loopSystem.type.Name} does not have subSystems");
+            }
+
+            PlayerLoopSystem[] updatedLoop = new PlayerLoopSystem[loopSystem.subSystemList.Length + 1];
+
+            for (int i = 0; i < updatedLoop.Length; i++)
+            {
+                if (i == index)
+                {
+                    updatedLoop[i] = newBeforeSystem;
+                }
+                else if (i == updatedLoop.Length - 1)
+                {
+                    updatedLoop[i] = newAfterSystem;
+                }
+                else if (i < index)
+                {
+                    updatedLoop[i] = loopSystem.subSystemList[i];
+                }
+                else
+                {
+                    updatedLoop[i] = loopSystem.subSystemList[i - 1];
+                }
+            }
+
+            loopSystem.subSystemList = updatedLoop;
+            return ref loopSystem;
+        }
+
         public static ref PlayerLoopSystem InsertSystemAt(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newSystem, int index)
         {
             if (loopSystem.subSystemList == null)

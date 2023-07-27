@@ -45,5 +45,18 @@ namespace PlayerLoopCustomizationAPI.Runtime
         {
             return ref PlayerLoopAPI.InsertSystemAt(ref parentSystem, newSystem, parentSystem.subSystemList.Length);
         }
+
+        public static ref PlayerLoopSystem WrapSystemsAt<T>(this ref PlayerLoopSystem parentSystem, in PlayerLoopSystem newBeforeSystem, in PlayerLoopSystem newAfterSystem) where T : struct
+        {
+            for (int i = 0; i < parentSystem.subSystemList.Length; i++)
+            {
+                if (parentSystem.subSystemList[i].type == typeof(T))
+                {
+                    return ref PlayerLoopAPI.WrapSystemAt(ref parentSystem, newBeforeSystem, newAfterSystem, i);
+                }
+            }
+            
+            throw new ArgumentException($"System {typeof(T).Name} is not presented in {(parentSystem.type != null ? parentSystem.type : "MainPlayerLoop")} system");
+        }
     }
 }

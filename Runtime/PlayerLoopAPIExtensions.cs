@@ -12,11 +12,9 @@ namespace PlayerLoopCustomizationAPI.Runtime
 
         public static ref PlayerLoopSystem InsertSystemBefore<T>(this ref PlayerLoopSystem parentSystem, in PlayerLoopSystem newSystem) where T : struct
         {
-            ref PlayerLoopSystem[] systems = ref parentSystem.subSystemList;
-
-            for (int i = 0; i < systems.Length; i++)
+            for (int i = 0; i < parentSystem.subSystemList.Length; i++)
             {
-                if (systems[i].type == typeof(T))
+                if (parentSystem.subSystemList[i].type == typeof(T))
                 {
                     return ref PlayerLoopAPI.InsertSystemAt(ref parentSystem, newSystem, i);
                 }
@@ -27,11 +25,9 @@ namespace PlayerLoopCustomizationAPI.Runtime
 
         public static ref PlayerLoopSystem InsertSystemAfter<T>(this ref PlayerLoopSystem parentSystem, in PlayerLoopSystem newSystem) where T : struct
         {
-            ref PlayerLoopSystem[] systems = ref parentSystem.subSystemList;
-
-            for (int i = 0; i < systems.Length; i++)
+            for (int i = 0; i < parentSystem.subSystemList.Length; i++)
             {
-                if (systems[i].type == typeof(T))
+                if (parentSystem.subSystemList[i].type == typeof(T))
                 {
                     return ref PlayerLoopAPI.InsertSystemAt(ref parentSystem, newSystem, i + 1);
                 }

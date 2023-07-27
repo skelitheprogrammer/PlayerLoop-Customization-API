@@ -18,8 +18,16 @@ https://github.com/skelitheprogrammer/PlayerLoop-Customization-API.git
 
 ### Add dependency in manifest.json
 ```
-"com.skillitronic.playerloopcustomizationapi" : "https://github.com/skelitheprogrammer/PlayerLoop-Customization-API",
+"com.skillitronic.playerloopcustomizationapi" : "https://github.com/skelitheprogrammer/PlayerLoop-Customization-API.git",
 ```
+
+# How to use
+```PlayerLoopAPI.GetCustomPlayerLoop``` - to get recent changes from PlayerLoopAPI\
+```PlayerLoopAPI.GetLoopSystem<T>(ref PlayerLoopSystem loopSystem)``` - to get interested nested subSystem \
+```PlayerLoopAPI.InsertSystemAt(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newSystem, int index)``` - to insert custom PlayerLoopSystem at given index
+```PlayerLoopAPI.WrapSystemAt(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newBeforeSystem, in PlayerLoopSystem newAfterSystem, int index)``` - to wrap interested PlayerLoopSystem with custom systems at given index
+
+> Check out [Extensions](Runtime/PlayerLoopAPIExtensions.cs) code to write in a declarative way
 
 # Getting Started
 

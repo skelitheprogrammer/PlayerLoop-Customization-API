@@ -1,7 +1,7 @@
 {
   "name": "com.skillitronic.playerloopcustomizationapi",
   "displayName": "PlayerLoop customization API",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "keywords": [
     "unity",
@@ -11,10 +11,16 @@
     "customization",
     "api"
   ],
+  "author": {
+    "name": "Dosyn Kirill",
+    "email": "dosynkirill@gmail.com",
+    "url": "https://github.com/skelitheprogrammer"
+  },
   "dependencies": {
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/skelitheprogrammer/PlayerLoop-Customization-API.git"
   }
+
 }

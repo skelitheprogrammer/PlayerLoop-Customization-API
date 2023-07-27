@@ -39,6 +39,13 @@ namespace PlayerLoopCustomizationAPI.Runtime
 
         public static ref PlayerLoopSystem InsertSystemAt(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newSystem, int index)
         {
+            if (loopSystem.subSystemList == null)
+            {
+                loopSystem.subSystemList = new PlayerLoopSystem[1];
+                loopSystem.subSystemList[0] = newSystem;
+                return ref loopSystem;
+            }
+            
             PlayerLoopSystem[] updatedLoop = new PlayerLoopSystem[loopSystem.subSystemList.Length + 1];
 
             for (int i = 0; i < updatedLoop.Length; i++)

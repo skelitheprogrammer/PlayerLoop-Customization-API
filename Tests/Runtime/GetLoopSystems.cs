@@ -4,8 +4,9 @@ using PlayerLoopCustomizationAPI.Runtime;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
 
-namespace PlayerLoopCustomizationAPI.Tests.PlayMode
+namespace PlayerLoopCustomizationAPI.Tests.Runtime
 {
+    [TestFixture]
     internal class GetLoopSystems
     {
         private struct CustomSystemName

@@ -5,8 +5,9 @@ using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
 
-namespace PlayerLoopCustomizationAPI.Tests.PlayMode
+namespace PlayerLoopCustomizationAPI.Tests.Runtime
 {
+    [TestFixture]
     internal class InsertLoopSystems
     {
         private struct CustomSystemAtBeginning
@@ -25,10 +26,15 @@ namespace PlayerLoopCustomizationAPI.Tests.PlayMode
         {
         }
 
+        private struct CustomNestedSystem
+        {
+        }
+        
         private PlayerLoopSystem _customSystemAtBeginning;
         private PlayerLoopSystem _customSystemAtEnd;
         private PlayerLoopSystem _customSystemBefore;
         private PlayerLoopSystem _customSystemAfter;
+        private PlayerLoopSystem _customNestedSystem;
 
         private PlayerLoopSystem _currentLoopSystem;
 
@@ -61,6 +67,11 @@ namespace PlayerLoopCustomizationAPI.Tests.PlayMode
                 {
                     type = typeof(CustomSystemAfter)
                 };
+
+                _customNestedSystem = new()
+                {
+                    type = typeof(CustomNestedSystem)
+                };
             }
 
             void InsertSystems()
@@ -74,6 +85,8 @@ namespace PlayerLoopCustomizationAPI.Tests.PlayMode
                     .InsertSystemAfter<Update.ScriptRunBehaviourUpdate>(_customSystemAfter)
                     ;
 
+                copyLoop.GetLoopSystem<Update>().GetLoopSystem<Update.ScriptRunBehaviourUpdate>().InsertAtBeginning(_customNestedSystem);
+                
                 PlayerLoop.SetPlayerLoop(copyLoop);
             }
         }
@@ -89,6 +102,7 @@ namespace PlayerLoopCustomizationAPI.Tests.PlayMode
             _customSystemAtEnd = default;
             _customSystemBefore = default;
             _customSystemAfter = default;
+            _currentLoopSystem = default;
         }
 
         [Test]
@@ -113,6 +127,12 @@ namespace PlayerLoopCustomizationAPI.Tests.PlayMode
         public void InsertSystemAfterScriptRunBehaviour()
         {
             Assert.IsNotNull(_currentLoopSystem.GetLoopSystem<Update>().GetLoopSystem<CustomSystemAfter>());
+        }
+
+        [Test]
+        public void InsertSystemInsideNewSubSystems()
+        {
+            Assert.IsNotNull(_currentLoopSystem.GetLoopSystem<Update>().GetLoopSystem<Update.ScriptRunBehaviourUpdate>().GetLoopSystem<CustomNestedSystem>());
         }
     }
 }

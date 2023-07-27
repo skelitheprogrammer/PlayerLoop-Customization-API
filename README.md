@@ -22,11 +22,30 @@ https://github.com/skelitheprogrammer/PlayerLoop-Customization-API.git
 ```
 
 # How to use
-```PlayerLoopAPI.GetCustomPlayerLoop``` - to get recent changes from PlayerLoopAPI\
-```PlayerLoopAPI.GetLoopSystem<T>(ref PlayerLoopSystem loopSystem)``` - to get interested nested subSystem \
-```PlayerLoopAPI.InsertSystemAt(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newSystem, int index)``` - to insert custom PlayerLoopSystem at given index
-```PlayerLoopAPI.WrapSystemAt(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newBeforeSystem, in PlayerLoopSystem newAfterSystem, int index)``` - to wrap interested PlayerLoopSystem with custom systems at given index
 
+To get recent changes from PlayerLoopAPI
+
+```c#
+PlayerLoopAPI.GetCustomPlayerLoop
+```
+\
+To get interested nested subSystem 
+
+```c#
+PlayerLoopAPI.GetLoopSystem<T>(ref PlayerLoopSystem loopSystem) 
+```
+\
+To insert custom PlayerLoopSystem at given index 
+
+```c#
+PlayerLoopAPI.InsertSystemAt(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newSystem, int index)
+```
+\
+To wrap interested PlayerLoopSystem with custom systems at given index
+
+```c#
+PlayerLoopAPI.WrapSystemAt(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newBeforeSystem, in PlayerLoopSystem newAfterSystem, int index)
+```
 > Check out [Extensions](Runtime/PlayerLoopAPIExtensions.cs) code to write in a declarative way
 
 # Getting Started

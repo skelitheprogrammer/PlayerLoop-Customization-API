@@ -41,6 +41,12 @@ To insert custom PlayerLoopSystem at given index
 PlayerLoopAPI.InsertSystemAt(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newSystem, int index)
 ```
 \
+To wrap selected PlayerLoopSystem with custom systems
+
+```c#
+PlayerLoopAPI.WrapSystem(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newBeforeSystem, in PlayerLoopSystem newAfterSystem)
+```
+\
 To wrap interested PlayerLoopSystem with custom systems at given index
 
 ```c#

@@ -20,7 +20,7 @@ namespace PlayerLoopCustomizationAPI.Runtime
                 }
             }
 
-            throw new ArgumentException($"System {typeof(T).Name} is not presented in {(parentSystem.type != null ? parentSystem.type : "MainPlayerLoop")} system");
+            throw new ArgumentException($"System {typeof(T).Name} is not presented in {(parentSystem.type is null ? parentSystem.type : "MainPlayerLoop")} system");
         }
 
         public static ref PlayerLoopSystem InsertSystemAfter<T>(this ref PlayerLoopSystem parentSystem, in PlayerLoopSystem newSystem) where T : struct
@@ -33,7 +33,7 @@ namespace PlayerLoopCustomizationAPI.Runtime
                 }
             }
 
-            throw new ArgumentException($"System {typeof(T).Name} is not presented in {(parentSystem.type != null ? parentSystem.type : "MainPlayerLoop")} system");
+            throw new ArgumentException($"System {typeof(T).Name} is not presented in {(parentSystem.type is null ? parentSystem.type : "MainPlayerLoop")} system");
         }
 
         public static ref PlayerLoopSystem InsertAtBeginning(this ref PlayerLoopSystem parentSystem, in PlayerLoopSystem newSystem)
@@ -56,7 +56,12 @@ namespace PlayerLoopCustomizationAPI.Runtime
                 }
             }
             
-            throw new ArgumentException($"System {typeof(T).Name} is not presented in {(parentSystem.type != null ? parentSystem.type : "MainPlayerLoop")} system");
+            throw new ArgumentException($"System {typeof(T).Name} is not presented in {(parentSystem.type is null ? parentSystem.type : "MainPlayerLoop")} system");
+        }
+        
+        public static ref PlayerLoopSystem WrapSystems(this ref PlayerLoopSystem parentSystem, in PlayerLoopSystem newBeforeSystem, in PlayerLoopSystem newAfterSystem)
+        {
+            return ref PlayerLoopAPI.WrapSystem(ref parentSystem, newBeforeSystem, newAfterSystem);
         }
     }
 }

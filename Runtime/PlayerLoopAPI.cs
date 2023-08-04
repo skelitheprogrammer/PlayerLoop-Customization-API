@@ -34,7 +34,7 @@ namespace PlayerLoopCustomizationAPI.Runtime
                 }
             }
 
-            throw new NullReferenceException($"System {typeof(T).Name} is not presented in {(loopSystem.type != null ? loopSystem.type : "MainPlayerLoop")} system");
+            throw new NullReferenceException($"System {typeof(T).Name} is not presented in {(loopSystem.type is null ? loopSystem.type : "MainPlayerLoop")} system");
         }
 
         public static ref PlayerLoopSystem WrapSystemAt(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newBeforeSystem, in PlayerLoopSystem newAfterSystem, int index)
@@ -44,26 +44,46 @@ namespace PlayerLoopCustomizationAPI.Runtime
                 throw new NullReferenceException($"{loopSystem.type.Name} does not have subSystems");
             }
 
-            PlayerLoopSystem[] updatedLoop = new PlayerLoopSystem[loopSystem.subSystemList.Length + 1];
+            PlayerLoopSystem[] updatedLoop = new PlayerLoopSystem[loopSystem.subSystemList.Length + 2];
 
             for (int i = 0; i < updatedLoop.Length; i++)
             {
-                if (i == index)
-                {
-                    updatedLoop[i] = newBeforeSystem;
-                }
-                else if (i == updatedLoop.Length - 1)
-                {
-                    updatedLoop[i] = newAfterSystem;
-                }
-                else if (i < index)
+                if (i < index)
                 {
                     updatedLoop[i] = loopSystem.subSystemList[i];
                 }
+                else if (i == index)
+                {
+                    updatedLoop[i] = newBeforeSystem;
+                    updatedLoop[i + 1] = loopSystem.subSystemList[i];
+                    updatedLoop[i + 2] = newAfterSystem;
+                    i += 2;
+                }
                 else
                 {
-                    updatedLoop[i] = loopSystem.subSystemList[i - 1];
+                    updatedLoop[i] = loopSystem.subSystemList[i - 2];
                 }
+            }
+
+            loopSystem.subSystemList = updatedLoop;
+            return ref loopSystem;
+        }
+
+        public static ref PlayerLoopSystem WrapSystem(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newBeforeSystem, in PlayerLoopSystem newAfterSystem)
+        {
+            if (loopSystem.subSystemList == null)
+            {
+                throw new NullReferenceException($"{loopSystem.type.Name} does not have subSystems");
+            }
+
+            PlayerLoopSystem[] updatedLoop = new PlayerLoopSystem[loopSystem.subSystemList.Length + 2];
+
+            updatedLoop[0] = newBeforeSystem;
+            updatedLoop[^1] = newAfterSystem;
+            
+            for (int i = 1; i < updatedLoop.Length - 1; i++)
+            {
+                updatedLoop[i] = loopSystem.subSystemList[i - 1];
             }
 
             loopSystem.subSystemList = updatedLoop;
@@ -72,13 +92,14 @@ namespace PlayerLoopCustomizationAPI.Runtime
 
         public static ref PlayerLoopSystem InsertSystemAt(ref PlayerLoopSystem loopSystem, in PlayerLoopSystem newSystem, int index)
         {
+            //todo: Make that  subsystem size will be dependent on index ?
             if (loopSystem.subSystemList == null)
             {
                 loopSystem.subSystemList = new PlayerLoopSystem[1];
                 loopSystem.subSystemList[0] = newSystem;
                 return ref loopSystem;
             }
-            
+
             PlayerLoopSystem[] updatedLoop = new PlayerLoopSystem[loopSystem.subSystemList.Length + 1];
 
             for (int i = 0; i < updatedLoop.Length; i++)
@@ -107,7 +128,6 @@ namespace PlayerLoopCustomizationAPI.Runtime
             HandleSubscription();
 
             PlayerLoop.SetPlayerLoop(_customPlayerLoop);
-            Debug.Log("Build");
 
             static void HandleSubscription()
             {
@@ -122,7 +142,7 @@ namespace PlayerLoopCustomizationAPI.Runtime
         }
 
 #if PLAYERLOOPBUILDERAPI_EXPERIMENTAL
-        
+
         public static ref PlayerLoopSystem Query<T>(ref PlayerLoopSystem loopSystem) where T : struct
         {
             if (loopSystem.subSystemList == null)
@@ -142,7 +162,7 @@ namespace PlayerLoopCustomizationAPI.Runtime
 
             return ref loopSystem;
         }
-        
+
 #endif
     }
 }

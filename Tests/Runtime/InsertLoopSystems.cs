@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 using PlayerLoopCustomizationAPI.Runtime;
-using PlayerLoopCustomizationAPI.Utils;
 using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
+using UnityEngine.Rendering;
 
 namespace PlayerLoopCustomizationAPI.Tests.Runtime
 {
@@ -29,110 +29,119 @@ namespace PlayerLoopCustomizationAPI.Tests.Runtime
         private struct CustomNestedSystem
         {
         }
-        
-        private PlayerLoopSystem _customSystemAtBeginning;
-        private PlayerLoopSystem _customSystemAtEnd;
-        private PlayerLoopSystem _customSystemBefore;
-        private PlayerLoopSystem _customSystemAfter;
-        private PlayerLoopSystem _customNestedSystem;
-
-        private PlayerLoopSystem _currentLoopSystem;
-
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            InitSystems();
-            InsertSystems();
-
-            _currentLoopSystem = PlayerLoop.GetCurrentPlayerLoop();
-
-            void InitSystems()
-            {
-                _customSystemAtBeginning = new()
-                {
-                    type = typeof(CustomSystemAtBeginning)
-                };
-
-                _customSystemAtEnd = new()
-                {
-                    type = typeof(CustomSystemAtEnd)
-                };
-
-                _customSystemBefore = new()
-                {
-                    type = typeof(CustomSystemBefore)
-                };
-
-                _customSystemAfter = new()
-                {
-                    type = typeof(CustomSystemAfter)
-                };
-
-                _customNestedSystem = new()
-                {
-                    type = typeof(CustomNestedSystem)
-                };
-            }
-
-            void InsertSystems()
-            {
-                ref PlayerLoopSystem copyLoop = ref PlayerLoopAPI.GetCustomPlayerLoop();
-
-                copyLoop.GetLoopSystem<Update>()
-                    .InsertAtBeginning(_customSystemAtBeginning)
-                    .InsertAtEnd(_customSystemAtEnd)
-                    .InsertSystemBefore<Update.ScriptRunBehaviourUpdate>(_customSystemBefore)
-                    .InsertSystemAfter<Update.ScriptRunBehaviourUpdate>(_customSystemAfter)
-                    ;
-
-                copyLoop.GetLoopSystem<Update>().GetLoopSystem<Update.ScriptRunBehaviourUpdate>().InsertAtBeginning(_customNestedSystem);
-                
-                PlayerLoop.SetPlayerLoop(copyLoop);
-            }
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            Debug.Log(PlayerLoopUtils.ShowLoopSystems(PlayerLoop.GetCurrentPlayerLoop()));
-            PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
-            Debug.Log(PlayerLoopUtils.ShowLoopSystems(PlayerLoop.GetCurrentPlayerLoop()));
-
-            _customSystemAtBeginning = default;
-            _customSystemAtEnd = default;
-            _customSystemBefore = default;
-            _customSystemAfter = default;
-            _currentLoopSystem = default;
-        }
 
         [Test]
         public void InsertSystemAtBeginningOfUpdateLoop()
         {
-            Assert.IsNotNull(_currentLoopSystem.GetLoopSystem<Update>().GetLoopSystem<CustomSystemAtBeginning>());
+            PlayerLoopSystem customSystem = new()
+            {
+                type = typeof(CustomSystemAtBeginning)
+            };
+
+            PlayerLoopSystem copyLoop = PlayerLoop.GetCurrentPlayerLoop();
+            ref PlayerLoopSystem updateLoop = ref copyLoop.GetLoopSystem<Update>();
+
+            PlayerLoopTestUtils.Log("Before ", updateLoop);
+
+            updateLoop.InsertAtBeginning(customSystem);
+
+            PlayerLoopTestUtils.Log("After", updateLoop);
+
+            Assert.AreEqual(updateLoop.subSystemList[0].type, typeof(CustomSystemAtBeginning));
         }
 
         [Test]
         public void InsertSystemAtEndOfUpdateLoop()
         {
-            Assert.IsNotNull(_currentLoopSystem.GetLoopSystem<Update>().GetLoopSystem<CustomSystemAtEnd>());
+            PlayerLoopSystem customSystem = new()
+            {
+                type = typeof(CustomSystemAtEnd)
+            };
+
+            PlayerLoopSystem copyLoop = PlayerLoop.GetCurrentPlayerLoop();
+            ref PlayerLoopSystem updateLoop = ref copyLoop.GetLoopSystem<Update>();
+
+            PlayerLoopTestUtils.Log("Before ", updateLoop);
+
+            updateLoop.InsertAtEnd(customSystem);
+
+            PlayerLoopTestUtils.Log("After", updateLoop);
+
+            Assert.AreEqual(updateLoop.subSystemList[^1].type, typeof(CustomSystemAtEnd));
         }
 
         [Test]
         public void InsertSystemBeforeScriptRunBehaviour()
         {
-            Assert.IsNotNull(_currentLoopSystem.GetLoopSystem<Update>().GetLoopSystem<CustomSystemBefore>());
+            PlayerLoopSystem customSystem = new()
+            {
+                type = typeof(CustomSystemBefore)
+            };
+
+            PlayerLoopSystem copyLoop = PlayerLoop.GetCurrentPlayerLoop();
+            ref PlayerLoopSystem updateLoop = ref copyLoop.GetLoopSystem<Update>();
+
+            PlayerLoopTestUtils.Log("Before ", updateLoop);
+
+            updateLoop.InsertSystemBefore<Update.ScriptRunBehaviourUpdate>(customSystem);
+
+            PlayerLoopTestUtils.Log("After", updateLoop);
+
+            for (int i = 0; i < updateLoop.subSystemList.Length; i++)
+            {
+                if (updateLoop.subSystemList[i].type == typeof(Update.ScriptRunBehaviourUpdate))
+                {
+                    Assert.AreEqual(updateLoop.subSystemList[i - 1].type, typeof(CustomSystemBefore));
+                    break;
+                }
+            }
         }
 
         [Test]
         public void InsertSystemAfterScriptRunBehaviour()
         {
-            Assert.IsNotNull(_currentLoopSystem.GetLoopSystem<Update>().GetLoopSystem<CustomSystemAfter>());
+            PlayerLoopSystem customSystem = new()
+            {
+                type = typeof(CustomSystemAfter)
+            };
+
+            PlayerLoopSystem copyLoop = PlayerLoop.GetCurrentPlayerLoop();
+            ref PlayerLoopSystem updateLoop = ref copyLoop.GetLoopSystem<Update>();
+
+            PlayerLoopTestUtils.Log("Before ", updateLoop);
+
+            updateLoop.InsertSystemAfter<Update.ScriptRunBehaviourUpdate>(customSystem);
+
+            PlayerLoopTestUtils.Log("After", updateLoop);
+
+            for (int i = 0; i < updateLoop.subSystemList.Length; i++)
+            {
+                if (updateLoop.subSystemList[i].type == typeof(Update.ScriptRunBehaviourUpdate))
+                {
+                    Assert.AreEqual(updateLoop.subSystemList[i + 1].type, typeof(CustomSystemAfter));
+                    break;
+                }
+            }
         }
 
         [Test]
         public void InsertSystemInsideNewSubSystems()
         {
-            Assert.IsNotNull(_currentLoopSystem.GetLoopSystem<Update>().GetLoopSystem<Update.ScriptRunBehaviourUpdate>().GetLoopSystem<CustomNestedSystem>());
+            PlayerLoopSystem customSystem = new()
+            {
+                type = typeof(CustomNestedSystem)
+            };
+
+            PlayerLoopSystem copyLoop = PlayerLoop.GetCurrentPlayerLoop();
+            ref PlayerLoopSystem scriptRunBehaviour = ref copyLoop.GetLoopSystem<Update>().GetLoopSystem<Update.ScriptRunBehaviourUpdate>();
+
+            PlayerLoopTestUtils.Log("Before ", scriptRunBehaviour);
+
+            PlayerLoopAPI.InsertSystemAt(ref scriptRunBehaviour, customSystem, 0);
+
+            PlayerLoopTestUtils.Log("After", scriptRunBehaviour);
+
+            Assert.AreEqual(scriptRunBehaviour.GetLoopSystem<CustomNestedSystem>().type, typeof(CustomNestedSystem));
         }
     }
 }

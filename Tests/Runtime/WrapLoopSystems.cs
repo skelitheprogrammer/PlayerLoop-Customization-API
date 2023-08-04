@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using PlayerLoopCustomizationAPI.Runtime;
 using PlayerLoopCustomizationAPI.Utils;
 using UnityEngine;
@@ -19,62 +18,81 @@ namespace PlayerLoopCustomizationAPI.Tests.Runtime
         {
         }
 
-        private PlayerLoopSystem _customBeforeSystem;
-        private PlayerLoopSystem _customSystemAfter;
-
-        private PlayerLoopSystem _currentLoopSystem;
-
-        [OneTimeSetUp]
-        public void OneTimeSetup()
+        [Test]
+        public void WrapSystemsAroundScripRunBehaviour()
         {
-            InitSystems();
-            InsertSystems();
+            PlayerLoopSystem[] customSystems = CreateSystems();
 
-            _currentLoopSystem = PlayerLoop.GetCurrentPlayerLoop();
+            PlayerLoopSystem copyLoop = PlayerLoop.GetCurrentPlayerLoop();
+            ref PlayerLoopSystem updateLoop = ref copyLoop.GetLoopSystem<Update>();
 
-            void InitSystems()
+            PlayerLoopTestUtils.Log("Before", updateLoop);
+
+            updateLoop.WrapSystemsAt<Update.ScriptRunBehaviourUpdate>(customSystems[0], customSystems[1]);
+
+            PlayerLoopTestUtils.Log("After", updateLoop);
+
+            for (int i = 0; i < updateLoop.subSystemList.Length; i++)
             {
-                _customBeforeSystem = new()
+                ref PlayerLoopSystem loopSystem = ref updateLoop.subSystemList[i];
+
+                if (loopSystem.type != typeof(Update.ScriptRunBehaviourUpdate))
                 {
-                    type = typeof(CustomBeforeSystemName)
-                };
+                    continue;
+                }
 
-                _customSystemAfter = new()
-                {
-                    type = typeof(CustomAfterSystemName)
-                };
+                ref PlayerLoopSystem beforeSystem = ref updateLoop.subSystemList[i - 1];
+                ref PlayerLoopSystem afterSystem = ref updateLoop.subSystemList[i + 1];
+
+                Assert.AreEqual(typeof(CustomBeforeSystemName), beforeSystem.type);
+                Assert.AreEqual(typeof(CustomAfterSystemName), afterSystem.type);
             }
-
-            void InsertSystems()
-            {
-                ref PlayerLoopSystem copyLoop = ref PlayerLoopAPI.GetCustomPlayerLoop();
-
-                copyLoop.GetLoopSystem<Update>().WrapSystemsAt<Update.ScriptRunBehaviourUpdate>(_customBeforeSystem, _customSystemAfter);
-
-                PlayerLoop.SetPlayerLoop(copyLoop);
-            }
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            Debug.Log(PlayerLoopUtils.ShowLoopSystems(PlayerLoop.GetCurrentPlayerLoop()));
-            PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
-            Debug.Log(PlayerLoopUtils.ShowLoopSystems(PlayerLoop.GetCurrentPlayerLoop()));
-
-            _customBeforeSystem = default;
-            _customSystemAfter = default;
-            _customSystemAfter = default;
-            _currentLoopSystem = default;
         }
 
         [Test]
-        public void WrapSystemAroundScripRunBehaviour()
+        public void WrapSystemsAroundWholeUpdateSystem()
         {
-            var updateLoop = _currentLoopSystem.GetLoopSystem<Update>();
-            
-            Assert.IsNotNull(updateLoop.GetLoopSystem<CustomBeforeSystemName>());
-            Assert.IsNotNull(updateLoop.GetLoopSystem<CustomAfterSystemName>());
+            PlayerLoopSystem[] customSystems = CreateSystems();
+
+            PlayerLoopSystem copyLoop = PlayerLoop.GetCurrentPlayerLoop();
+
+            ref PlayerLoopSystem updateLoop = ref copyLoop.GetLoopSystem<Update>();
+
+            PlayerLoopTestUtils.Log("Before", updateLoop);
+
+            updateLoop.WrapSystems(customSystems[0], customSystems[1]);
+
+            PlayerLoopTestUtils.Log("After", updateLoop);
+
+            PlayerLoopSystem firstSystem = updateLoop.subSystemList[0];
+            PlayerLoopSystem lastSystem = updateLoop.subSystemList[^1];
+
+            Assert.AreEqual(typeof(CustomBeforeSystemName), firstSystem.type);
+            Assert.AreEqual(typeof(CustomAfterSystemName), lastSystem.type);
+        }
+
+        private static PlayerLoopSystem[] CreateSystems()
+        {
+            return new PlayerLoopSystem[]
+            {
+                new()
+                {
+                    type = typeof(CustomBeforeSystemName)
+                },
+
+                new()
+                {
+                    type = typeof(CustomAfterSystemName)
+                }
+            };
+        }
+    }
+
+    internal static class PlayerLoopTestUtils
+    {
+        internal static void Log(string prefix, in PlayerLoopSystem playerLoopSystem)
+        {
+            Debug.Log($"{prefix} \n {PlayerLoopUtils.ShowLoopSystems(playerLoopSystem)}");
         }
     }
 }

@@ -1,5 +1,5 @@
 {
-    "name": "PlayerLoopBuilder.Tests.Runtime",
+    "name": "PlayerLoopCustmoizationAPI.Tests.Runtime",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",

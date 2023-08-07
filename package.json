@@ -1,7 +1,7 @@
 {
   "name": "com.skillitronic.playerloopcustomizationapi",
   "displayName": "PlayerLoop customization API",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Create your own loop system using interface built on top of Unity's PlayerLoop",
   "keywords": [
     "unity",

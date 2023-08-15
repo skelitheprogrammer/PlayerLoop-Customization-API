@@ -122,7 +122,7 @@ namespace PlayerLoopCustomizationAPI.Runtime
             return ref loopSystem;
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         private static void BuildInternal()
         {
             HandleSubscription();
@@ -133,12 +133,13 @@ namespace PlayerLoopCustomizationAPI.Runtime
             {
                 Application.quitting -= Reset;
                 Application.quitting += Reset;
-            }
-        }
 
-        private static void Reset()
-        {
-            PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
+                static void Reset()
+                {
+                    _customPlayerLoop = PlayerLoop.GetDefaultPlayerLoop();
+                    PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
+                }
+            }
         }
 
 #if PLAYERLOOPBUILDERAPI_EXPERIMENTAL

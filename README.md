@@ -18,12 +18,12 @@ https://github.com/skelitheprogrammer/PlayerLoop-Customization-API.git
 PlayerLoopAPI allows user to add additional systems into default Unity loop.
 
 > [!NOTE]
-> PlayerLoopAPI don't override PlayerLoop. It builds everything from map, that user populated using methods
+> PlayerLoopAPI don't override root PlayerLoopSystem struct.
+> PlayerLoopAPI copies root PlayerLoopSystem struct into his map, than builds a new one, using the map
 
 > [!WARNING]
-> PlayerLoopAPI setups himself at [`[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]`](https://docs.unity3d.com/ScriptReference/RuntimeInitializeLoadType.SubsystemRegistration.html) 
-> timing and initiates at [`[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]`](https://docs.unity3d.com/ScriptReference/RuntimeInitializeLoadType.BeforeSplashScreen.html)
-> timing
+> PlayerLoopAPI setups himself at [`[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]`](https://docs.unity3d.com/ScriptReference/RuntimeInitializeLoadType.SubsystemRegistration.html) timing \
+> and builds at [`[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]`](https://docs.unity3d.com/ScriptReference/RuntimeInitializeLoadType.BeforeSplashScreen.html) timing
 
 ### Methods to use
 > [!NOTE]
@@ -56,7 +56,7 @@ using UnityEngine;
 
 public static class Registrar
 {
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     private static void Init()
     {
     
@@ -73,7 +73,7 @@ public static class Registrar
 {
     private struct SystemName {}
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     private static void Init()
     {
         PlayerLoopSystem someSystem = new()
@@ -97,7 +97,7 @@ public static class Registrar
 {
     private struct SystemName {}
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     private static void Init()
     {
         PlayerLoopSystem someSystem = new()

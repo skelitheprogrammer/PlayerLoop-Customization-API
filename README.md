@@ -1,120 +1,61 @@
 <div align="center">   
-    
-<h1>PlayerLoop customization API</h1>
-Create your own loop system using interface built on top of <a href="https://docs.unity3d.com/ScriptReference/LowLevel.PlayerLoop.html">Unity's PlayerLoop</a>
+
+<h1>PlayerLoop Extender</h1>
+Add/Remove/Filter <a href="https://docs.unity3d.com/ScriptReference/LowLevel.PlayerLoop.html">Unity's PlayerLoop</a> systems!
 </div>
 
 # Installation
-### Add via package manager
+
+<details>
+<summary>
+<h2>Add via package manager</h2>
+</summary>
+
 ```
-https://github.com/skelitheprogrammer/PlayerLoop-Customization-API.git
+https://github.com/skelitheprogrammer/PlayerLoopExtender.git
 ```
-### Or add dependency in manifest.json
+</details>
+
+<details>
+<summary>
+<h2>
+Or add dependency in manifest.json
+</h2>
+</summary>
+
 ```
-"com.skillitronic.playerloopcustomizationapi" : "https://github.com/skelitheprogrammer/PlayerLoop-Customization-API.git",
+"com.skillitronic.playerloopextender" : "https://github.com/skelitheprogrammer/PlayerLoopExtender.git",
 ```
+</details>
 
-# Introduction
-PlayerLoopAPI allows user to add additional systems into default Unity loop.
+# Quick Start
 
-> [!NOTE]
-> PlayerLoopAPI don't override root PlayerLoopSystem struct.
-> PlayerLoopAPI copies root PlayerLoopSystem struct into his map, than builds a new one, using the map
-
-> [!WARNING]
-> PlayerLoopAPI setups himself at [`[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]`](https://docs.unity3d.com/ScriptReference/RuntimeInitializeLoadType.SubsystemRegistration.html) timing \
-> and builds at [`[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]`](https://docs.unity3d.com/ScriptReference/RuntimeInitializeLoadType.BeforeSplashScreen.html) timing
-
-### Methods to use
-> [!NOTE]
-> If the user leaves the type equal to null, then PlayerLoopAPI will treat this as root PlayerLoopSystem
-
-Add a system before/after the selected system type name
 ```c#
-PlayerLoopAPI.AddBefore(ref PlayerLoopSystem insertSystem, Type systemType = null);
-PlayerLoopAPI.AddAfter(ref PlayerLoopSystem insertSystem, Type systemType = null); 
-```
-Adding a system as a child at the beginning/end of the selected system type name
-```c#
-PlayerLoopAPI.AddAtBeginning(ref PlayerLoopSystem insertSystem, Type systemType = null); 
-PlayerLoopAPI.AddAtEnd(ref PlayerLoopSystem insertSystem, Type systemType = null);
-```
-Wrap systems around the selected system type name
-```c#
-PlayerLoopAPI.WrapAround(ref PlayerLoopSystem beforeSystem, ref PlayerLoopSystem afterSystem, Type systemType = null);
-```
-Wrap systems as children at the beginning and end of the selected system type name
-```c#
-PlayerLoopAPI.WrapInside(ref PlayerLoopSystem beforeSystem, ref PlayerLoopSystem afterSystem, Type systemType = null);
-```
-
-## Getting started
-
-Create static class that will execute modifications before  [`[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]`](https://docs.unity3d.com/ScriptReference/RuntimeInitializeLoadType.BeforeSplashScreen.html)
-```c#
-using UnityEngine;
-
-public static class Registrar
-{
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-    private static void Init()
+    internal struct TestSystemName
     {
+        public static PlayerLoopSystem Create(PlayerLoopSystem.UpdateFunction updateFunction = null) => new()
+        {
+            type = typeof(TestSystemName),
+            updateDelegate = updateFunction
+        };
+    }
+
+    public static class Context
+    {
+        [MenuItem("PlayerLoop/Action")]
+        private static void InsertSystems()
+        {
+            Type anchorType = typeof(Update.ScriptRunBehaviourUpdate);
     
-    }
-}
-```
-
-Create system yourself or use Utils class
-```c#
-using UnityEngine;
-using PlayerLoopCustomizationAPI.Utils;
-
-public static class Registrar
-{
-    private struct SystemName {}
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-    private static void Init()
-    {
-        PlayerLoopSystem someSystem = new()
-        {
-            type = typeof(SystemName),
-            updateDelegate = () => Debug.Log("Hi!")
+            PlayerLoopSystem copyLoop = PlayerLoop.GetDefaultPlayerLoop();
+    
+            copyLoop.InsertSystem(TestSystemName.Create(), anchorType, PlayerLoopSystemExtensions.InsertType.BEFORE);
+            copyLoop.InsertSystem(TestSystemName.Create(), anchorType, PlayerLoopSystemExtensions.InsertType.AFTER);
+        
+            PlayerLoop.SetPlayerLoop(copyLoop);
+            
+            LogLoopSystem(copyLoop);
         }
-       
-        // or
-        
-        PlayerLoopSystem someSystem = PlayerLoopUtils.CreateSystem<SystemName>(() => Debug.Log("Hi");
     }
-}
-```
-Add created system wherever you want
-```c#
-using UnityEngine;
-using PlayerLoopCustomizationAPI.Utils;
-
-public static class Registrar
-{
-    private struct SystemName {}
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-    private static void Init()
-    {
-        PlayerLoopSystem someSystem = new()
-        {
-            type = typeof(SystemName),
-            updateDelegate = () => Debug.Log("Hi!")
-        }
-       
-        // or
-        
-        PlayerLoopSystem someSystem = PlayerLoopUtils.CreateSystem<SystemName>(() => Debug.Log("Hi");
-        
-        PlayerLoopAPI.AddBefore(ref someSystem, typeof(Update.ScriptRunBehaviourUpdate));
-    }
-}
 ```
 
-# Addons
-
-- [PlayerLoop-customization-API.Runner](https://github.com/skelitheprogrammer/PlayerLoop-customization-API.Runner) - Add custom or Use predefined interfaces to run your custom Loop System!

@@ -1,14 +1,15 @@
 {
-  "name": "com.skillitronic.playerloopcustomizationapi",
-  "displayName": "PlayerLoop customization API",
-  "version": "0.2.0",
-  "description": "Create your own loop system using interface built on top of Unity's PlayerLoop",
+  "name": "com.skillitronic.playerloopextender",
+  "displayName": "PlayerLoop Extender",
+  "version": "0.3.0",
+  "description": "Project, which extend work player loop capabilities",
   "keywords": [
     "unity",
     "unity3d",
     "playerloop",
     "playerloopapi",
-    "customization",
+    "extensions",
+    "extender",
     "api"
   ],
   "author": {
@@ -16,11 +17,8 @@
     "email": "dosynkirill@gmail.com",
     "url": "https://github.com/skelitheprogrammer"
   },
-  "dependencies": {
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/skelitheprogrammer/PlayerLoop-Customization-API.git"
   }
-
 }

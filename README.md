@@ -4,7 +4,7 @@
 <b>Insert✨Remove✨Filter <a href="https://docs.unity3d.com/ScriptReference/LowLevel.PlayerLoop.html">Unity's PlayerLoop</a> systems!</b>
 </div>
 
-#💾  Installation
+# 💾 Installation
 
 <details>
 <summary>
@@ -102,12 +102,12 @@ foreach (Type type in PlayerLoopSystemFilter.XR)
     copyLoop.TryRemoveSystem(type);
 }
 ```
-[!NOTE]
-You can extend this class, by adding your own filter.
+> [!NOTE]
+> You can extend this class, by adding your own filter.
 
 # Misc.
-[!Tip]
-You can Check out [Tests](https://github.com/skelitheprogrammer/PlayerLoopExtender/tree/a3d84c438d6e7350f3954e31978302344a0e4f98/Tests/Editor) to see how you can use this methods.
+> [!Tip]
+> You can Check out [Tests](https://github.com/skelitheprogrammer/PlayerLoopExtender/tree/a3d84c438d6e7350f3954e31978302344a0e4f98/Tests/Editor) to see how you can use this methods.
 
 
 

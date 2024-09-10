@@ -1,6 +1,9 @@
-﻿using System.Text;
-using UnityEngine;
+﻿#if UNITY_EDITOR
+
+using System.Diagnostics;
+using System.Text;
 using UnityEngine.LowLevel;
+using Debug = UnityEngine.Debug;
 
 namespace PlayerLoopExtender
 {
@@ -8,6 +11,7 @@ namespace PlayerLoopExtender
     {
         private static readonly StringBuilder EDITOR_LOG_BUILDER = new();
 
+        [Conditional("UNITY_EDITOR")]
         public static void LogLoopSystem(in PlayerLoopSystem system)
         {
             EDITOR_LOG_BUILDER.Clear();
@@ -15,6 +19,7 @@ namespace PlayerLoopExtender
             Debug.Log(EDITOR_LOG_BUILDER);
         }
 
+        [Conditional("UNITY_EDITOR")]
         public static void ListSystemNames(PlayerLoopSystem playerLoopSystem, StringBuilder builder, int inline = 0)
         {
             if (playerLoopSystem.type != null)
@@ -38,8 +43,10 @@ namespace PlayerLoopExtender
             }
         }
 
-        public static string GetSystemName(this ref PlayerLoopSystem system) => system.type == null
+        internal static string GetSystemName(this ref PlayerLoopSystem system) => system.type == null
             ? "[EmptyName]"
             : system.type.Name;
     }
 }
+
+#endif
